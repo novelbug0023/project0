@@ -10,6 +10,7 @@ TagManager:
   - Ground
   - wall
   - Enemy
+  - warf
   layers:
   - Default
   - TransparentFX

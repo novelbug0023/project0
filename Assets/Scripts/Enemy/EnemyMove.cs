@@ -20,19 +20,19 @@ public class EnemyMove : MonoBehaviour
         enemy = this.GetComponent<Transform>();
         enemySprite = this.GetComponent<SpriteRenderer>();
         StartPos = this.transform.position;
-       
+
     }
     float a = 1;
     // Update is called once per frame
     void Update()
     {
-        
+
         if (!isplayer)
         {
             thisEnemy = transform.position;
-            Ray2D ray = new Ray2D(enemy.position,Vector2.zero);
+            Ray2D ray = new Ray2D(enemy.position, Vector2.zero);
             RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
-            
+
             if (hit.collider != null)
             {
                 Debug.DrawRay(enemy.transform.position, enemy.right);
@@ -84,13 +84,28 @@ public class EnemyMove : MonoBehaviour
         enemy.Translate(enemy.right * delta);
         yield return new WaitForSeconds(3);
     }
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.gameObject.CompareTag("Player"))
-    //    {
-    //        enemySprite.flipX = !enemySprite.flipX;
-    //        isplayer = true;
-    //        Playertarget = other.gameObject.transform;
-    //    }
-    //}
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            enemySprite.flipX = !enemySprite.flipX;
+            isplayer = true;
+            Playertarget = other.gameObject.transform;
+        }
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            other.gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+            other.gameObject.GetComponent<Rigidbody2D>().gravityScale = 1;
+        }
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            collision.gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+            collision.gameObject.GetComponent<Rigidbody2D>().gravityScale = 1;
+            
+
+        }
+    }
 }

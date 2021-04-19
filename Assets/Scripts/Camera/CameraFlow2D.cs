@@ -22,7 +22,7 @@ public class CameraFlow2D : MonoBehaviour
         //this.transform.LookAt(CameTarget);
         //this.transform.Translate(CameTarget.position);
         Vector3 dir = CameTarget.transform.position - this.transform.position;
-        Vector3 moveVector = new Vector3(dir.x * CameraSpeed * Time.deltaTime, dir.y * CameraSpeed * Time.deltaTime, 0.0f);
+        Vector3 moveVector = new Vector3(dir.x * CameraSpeed * Time.deltaTime, dir.y+2/* * CameraSpeed * Time.deltaTime, 0.0f*/);
         this.transform.Translate(moveVector);
     }
 }

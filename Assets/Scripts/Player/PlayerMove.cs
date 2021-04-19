@@ -134,10 +134,13 @@ public class PlayerMove : MonoBehaviour
     {
         if (isEnemyAttack)
         {
-            Debug.Log("적이 맞았다");
-            target.gameObject.GetComponent<EnemyManager>().hp -= PlayerDB.Instance.DB.AttackPint;
+            if (target != null)
+            {
+                Debug.Log("적이 맞았다");
+                target.gameObject.GetComponent<EnemyManager>().hp -= PlayerDB.Instance.DB.AttackPint;
+            }
         }
-        
+
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -146,25 +149,87 @@ public class PlayerMove : MonoBehaviour
             isjumping = false;
             JumpCount = 0;
         }
-        
-    }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
         if (collision.gameObject.CompareTag("Enemy"))
         {
+            collision.gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+            collision.gameObject.GetComponent<Rigidbody2D>().gravityScale = 0;
             isEnemyAttack = true;
             target = collision.gameObject;
             target.gameObject.GetComponent<EnemyMove>().isplayer = true;
             target.gameObject.GetComponent<EnemyMove>().Playertarget = this.gameObject.transform;
         }
+
+    }
+    public int mapLevel;
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("warf"))
+        {
+            Debug.Log("이동");
+            if (MapDatabass.Instance.DB.mapLevel < 5) { MapDatabass.Instance.DB.mapLevel++; }
+            if (MapDatabass.Instance.DB.mapLevel == 0)
+            {
+                MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
+                MapDatabass.Instance.SpwanPlayer();
+                SpwonEnemy.Instance.spwonEnemys();
+            }
+            if (MapDatabass.Instance.DB.mapLevel == 1)
+            {
+                if (SpwonEnemy.Instance.DB.mapEnemy == null)
+                {
+                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
+                    MapDatabass.Instance.SpwanPlayer();
+                    SpwonEnemy.Instance.spwonEnemys();
+                }
+            }
+            if (MapDatabass.Instance.DB.mapLevel == 2)
+            {
+                if (SpwonEnemy.Instance.DB.mapEnemy == null)
+                {
+                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
+                    MapDatabass.Instance.SpwanPlayer();
+                    SpwonEnemy.Instance.spwonEnemys();
+                }
+            }
+            if (MapDatabass.Instance.DB.mapLevel == 3)
+            {
+                if (SpwonEnemy.Instance.DB.mapEnemy == null)
+                {
+                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
+                    MapDatabass.Instance.SpwanPlayer();
+                    SpwonEnemy.Instance.spwonEnemys();
+                }
+            }
+            if (MapDatabass.Instance.DB.mapLevel == 4)
+            {
+                if (SpwonEnemy.Instance.DB.mapEnemy == null)
+                {
+                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
+                    MapDatabass.Instance.SpwanPlayer();
+                    SpwonEnemy.Instance.spwonEnemys();
+                }
+            }
+            if (MapDatabass.Instance.DB.mapLevel == 5)
+            {
+                if (SpwonEnemy.Instance.DB.mapEnemy == null)
+                {
+                    MapDatabass.Instance.homePlayer();
+
+                    MapDatabass.Instance.DB.mapLevel = 0;
+                }
+            }
+        }
+
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
             isEnemyAttack = false;
+            collision.gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+            collision.gameObject.GetComponent<Rigidbody2D>().gravityScale = 1;
         }
     }
-    
+
 }
 
