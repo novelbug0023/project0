@@ -34,6 +34,7 @@ public class EnemyManager : MonoBehaviour
         if (hp <= 0)
         {
             Destroy(this.gameObject);
+            SpwonEnemy.Instance.DB.mapEnemy.Remove(this.gameObject);
         }
     }
 }

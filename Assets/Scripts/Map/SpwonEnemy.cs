@@ -56,53 +56,64 @@ public class SpwonEnemy : MonoBehaviour
 
 
     #endregion
+
     public void spwonEnemys()
     {
+        StartCoroutine(spownTime());
         
-        if (MapDatabass.Instance.DB.mapLevel == 1)
+    }
+    IEnumerator spownTime()
+    {
+        if (MapDatabass.Instance.DB.SpwanNum == 0)
         {
-            if (MapDatabass.Instance.DB.SpwanNum == 1)
+            for (int i = 0; i < 3; i++)
             {
-                for (int i = 0; i < 9; i++)
-                {
-                    Debug.Log("스폰적1");
-                    DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS[1].transform.position, Quaternion.identity, DB.EnemySpwonPOS[1].parent));
-                    //DB.mapEnemy[i] = Instantiate(DB.Enemy[0], DB.EnemySpwonPOS[1].transform.position, Quaternion.identity, DB.EnemySpwonPOS[1].parent);
-                }
-            }
-            if (MapDatabass.Instance.DB.SpwanNum == 2)
-            {
-                for (int i = 0; i < 9; i++)
-                {
-                    Debug.Log("스폰적2");
-                    DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS[2].transform.position, Quaternion.identity, DB.EnemySpwonPOS[2].parent));
-                }
-            }
-            if (MapDatabass.Instance.DB.SpwanNum == 3)
-            {
-                for (int i = 0; i < 9; i++)
-                {
-                    Debug.Log("스폰적3");
-                    DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS[3].transform.position, Quaternion.identity, DB.EnemySpwonPOS[3].parent));
-                }
-            }
-            if (MapDatabass.Instance.DB.SpwanNum == 4)
-            {
-                for (int i = 0; i < 9; i++)
-                {
-                    Debug.Log("스폰적4");
-                    DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS[4].transform.position, Quaternion.identity, DB.EnemySpwonPOS[4].parent));
-                }
-            }
-            if (MapDatabass.Instance.DB.SpwanNum == 5)
-            {
-                for (int i = 0; i < 9; i++)
-                {
-                    Debug.Log("스폰적4");
-                    DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS[5].transform.position, Quaternion.identity, DB.EnemySpwonPOS[5].parent));
-                }
+                Debug.Log("스폰적1");
+                yield return new WaitForSeconds(2f);
+                DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS[0].transform.position, Quaternion.identity, DB.EnemySpwonPOS[0].parent));
+                DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS2[0].transform.position, Quaternion.identity, DB.EnemySpwonPOS2[0].parent));
             }
         }
-
+        if (MapDatabass.Instance.DB.SpwanNum == 1)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Debug.Log("스폰적2");
+                yield return new WaitForSeconds(2f);
+                DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS[1].transform.position, Quaternion.identity, DB.EnemySpwonPOS[1].parent));
+                DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS2[1].transform.position, Quaternion.identity, DB.EnemySpwonPOS2[1].parent));
+            }
+        }
+        if (MapDatabass.Instance.DB.SpwanNum == 2)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Debug.Log("스폰적3");
+                yield return new WaitForSeconds(2f);
+                DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS[2].transform.position, Quaternion.identity, DB.EnemySpwonPOS[2].parent));
+                DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS2[2].transform.position, Quaternion.identity, DB.EnemySpwonPOS2[2].parent));
+            }
+        }
+        if (MapDatabass.Instance.DB.SpwanNum == 3)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Debug.Log("스폰적4");
+                yield return new WaitForSeconds(2f);
+                DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS[3].transform.position, Quaternion.identity, DB.EnemySpwonPOS[3].parent));
+                DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS2[3].transform.position, Quaternion.identity, DB.EnemySpwonPOS2[3].parent));
+            }
+        }
+        if (MapDatabass.Instance.DB.SpwanNum == 4)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Debug.Log("스폰적4");
+                yield return new WaitForSeconds(2f);
+                DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS[4].transform.position, Quaternion.identity, DB.EnemySpwonPOS[4].parent));
+                DB.mapEnemy.Add(Instantiate(DB.Enemy[0], DB.EnemySpwonPOS2[4].transform.position, Quaternion.identity, DB.EnemySpwonPOS2[4].parent));
+            }
+        }
     }
+
 }

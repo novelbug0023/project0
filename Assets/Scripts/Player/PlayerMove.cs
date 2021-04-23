@@ -19,6 +19,34 @@ public class PlayerMove : MonoBehaviour
     }
     public PlayerKinds playerKinds;
 
+    public int enemyCount;
+    #region ΩÃ±€≈Ê
+    private static PlayerMove instance = null;
+    void Awake()
+    {
+        if (null == instance)
+        {
+            instance = this;
+
+            //DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+    }
+    public static PlayerMove Instance
+    {
+        get
+        {
+            if (null == instance)
+            {
+                return null;
+            }
+            return instance;
+        }
+    }
+    #endregion
     // Start is called before the first frame update
     void Start()
     {
@@ -53,13 +81,12 @@ public class PlayerMove : MonoBehaviour
             if (JumpCount >= 2)
             {
                 isjumping = false;
-
-
                 return;
 
             }
             else
             {
+                this.gameObject.GetComponent<Rigidbody2D>().mass = 1;
                 playerRigd.AddForce(Vector2.up * JumpFowar, ForceMode2D.Impulse);
                 isjumping = true;
                 JumpCount++;
@@ -146,90 +173,107 @@ public class PlayerMove : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
+            this.gameObject.GetComponent<Rigidbody2D>().mass = 1000;
             isjumping = false;
             JumpCount = 0;
         }
-        if (collision.gameObject.CompareTag("Enemy"))
-        {
-            collision.gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
-            collision.gameObject.GetComponent<Rigidbody2D>().gravityScale = 0;
-            isEnemyAttack = true;
-            target = collision.gameObject;
-            target.gameObject.GetComponent<EnemyMove>().isplayer = true;
-            target.gameObject.GetComponent<EnemyMove>().Playertarget = this.gameObject.transform;
-        }
+        //if (collision.gameObject.CompareTag("Enemy"))
+        //{
+        //    if (!target.gameObject.GetComponent<EnemyMove>().isplayer)
+        //    {
+        //        enemyCount++;
+        //        isEnemyAttack = true;
+        //        target = collision.gameObject;
+        //        target.gameObject.GetComponent<EnemyMove>().isplayer = true;
+        //        target.gameObject.GetComponent<EnemyMove>().Playertarget = this.gameObject.transform;
+        //    }
+        //}
 
     }
-    public int mapLevel;
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("warf"))
-        {
-            Debug.Log("¿Ãµø");
-            if (MapDatabass.Instance.DB.mapLevel < 5) { MapDatabass.Instance.DB.mapLevel++; }
-            if (MapDatabass.Instance.DB.mapLevel == 0)
-            {
-                MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
-                MapDatabass.Instance.SpwanPlayer();
-                SpwonEnemy.Instance.spwonEnemys();
-            }
-            if (MapDatabass.Instance.DB.mapLevel == 1)
-            {
-                if (SpwonEnemy.Instance.DB.mapEnemy == null)
-                {
-                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
-                    MapDatabass.Instance.SpwanPlayer();
-                    SpwonEnemy.Instance.spwonEnemys();
-                }
-            }
-            if (MapDatabass.Instance.DB.mapLevel == 2)
-            {
-                if (SpwonEnemy.Instance.DB.mapEnemy == null)
-                {
-                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
-                    MapDatabass.Instance.SpwanPlayer();
-                    SpwonEnemy.Instance.spwonEnemys();
-                }
-            }
-            if (MapDatabass.Instance.DB.mapLevel == 3)
-            {
-                if (SpwonEnemy.Instance.DB.mapEnemy == null)
-                {
-                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
-                    MapDatabass.Instance.SpwanPlayer();
-                    SpwonEnemy.Instance.spwonEnemys();
-                }
-            }
-            if (MapDatabass.Instance.DB.mapLevel == 4)
-            {
-                if (SpwonEnemy.Instance.DB.mapEnemy == null)
-                {
-                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
-                    MapDatabass.Instance.SpwanPlayer();
-                    SpwonEnemy.Instance.spwonEnemys();
-                }
-            }
-            if (MapDatabass.Instance.DB.mapLevel == 5)
-            {
-                if (SpwonEnemy.Instance.DB.mapEnemy == null)
-                {
-                    MapDatabass.Instance.homePlayer();
-
-                    MapDatabass.Instance.DB.mapLevel = 0;
-                }
-            }
-        }
-
-    }
-    private void OnTriggerExit2D(Collider2D collision)
+    private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
             isEnemyAttack = false;
-            collision.gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
-            collision.gameObject.GetComponent<Rigidbody2D>().gravityScale = 1;
         }
     }
+    public int mapLevel;
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (SpwonEnemy.Instance.DB.mapEnemy.Count == 0)
+        {
+            if (collision.gameObject.CompareTag("warf"))
+            {
+                Debug.Log("¿Ãµø");
+                mapLevel++;
+                if (mapLevel == 0)
+                {
+                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
+                    Debug.Log("∑£¥˝" + MapDatabass.Instance.DB.SpwanNum);
+                    MapDatabass.Instance.SpwanPlayer();
+                    SpwonEnemy.Instance.spwonEnemys();
+                }
+                if (mapLevel == 1)
+                {
+
+                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
+                    MapDatabass.Instance.SpwanPlayer();
+                    SpwonEnemy.Instance.spwonEnemys();
+
+                }
+                if (mapLevel == 2)
+                {
+
+                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
+                    MapDatabass.Instance.SpwanPlayer();
+                    SpwonEnemy.Instance.spwonEnemys();
+
+                }
+                if (mapLevel == 3)
+                {
+                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
+                    MapDatabass.Instance.SpwanPlayer();
+                    SpwonEnemy.Instance.spwonEnemys();
+
+                }
+                if (mapLevel == 4)
+                {
+                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
+                    MapDatabass.Instance.SpwanPlayer();
+                    SpwonEnemy.Instance.spwonEnemys();
+
+                }
+                if (mapLevel == 5)
+                {
+                    //if (SpwonEnemy.Instance.DB.mapEnemy == null)
+                    //{
+                    MapDatabass.Instance.homePlayer();
+
+                    MapDatabass.Instance.DB.mapLevel = 0;
+                    //}
+                }
+                if (mapLevel > 5) { mapLevel = 0; }
+            }
+        }
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            enemyCount++;
+            isEnemyAttack = true;
+            target = collision.gameObject;
+            //target.gameObject.GetComponent<EnemyMove>().isplayer = true;
+            //target.gameObject.GetComponent<EnemyMove>().Playertarget = this.gameObject.transform;
+        }
+
+    }
+    //private void OnTriggerExit2D(Collider2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Enemy"))
+    //    {
+    //        isEnemyAttack = false;
+    //        collision.gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+    //        collision.gameObject.GetComponent<Rigidbody2D>().gravityScale = 1;
+    //    }
+    //}
 
 }
 

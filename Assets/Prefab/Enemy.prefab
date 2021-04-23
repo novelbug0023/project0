@@ -99,7 +99,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.037715882, y: -0.018810987}
+  m_Offset: {x: -0.056373358, y: -0.018810987}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -110,7 +110,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.5962229, y: 3.4323773}
+  m_Size: {x: 1.6335392, y: 3.4323773}
   m_EdgeRadius: 0
 --- !u!50 &2211614993300354488
 Rigidbody2D:
@@ -160,12 +160,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d28dc0995ecd37439467244a83b68e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveNum: 0
+  enemyRigid: {fileID: 0}
   enemy: {fileID: 0}
-  Playertarget: {fileID: 0}
-  right: 0
-  left: 0
-  isplayer: 0
-  speed: 1
-  StartPos: {x: 0, y: 0}
-  thisEnemy: {x: 0, y: 0}
-  isTurn: 0
+  Speed: 5
+  mask:
+    serializedVersion: 2
+    m_Bits: 64
+  target: {fileID: 0}
+  state: 0
