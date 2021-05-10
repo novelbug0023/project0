@@ -266,8 +266,13 @@ public class EnemyMove : MonoBehaviour
     public GameObject enemy;
     public float Speed = 5.0f;
     public LayerMask mask;
+    public LayerMask wallmask;
+    public LayerMask player;
     public GameObject target;
     public Collider2D coll;
+    public Animator enemyAnime;
+    public bool isTurn;
+    public bool isAttack;
     public enum Enemystate
     {
         idle, attack
@@ -275,16 +280,18 @@ public class EnemyMove : MonoBehaviour
     public Enemystate state;
     private void Start()
     {
+        enemyAnime = this.gameObject.GetComponent<Animator>();
         enemy = this.gameObject;
         enemyRigid = this.gameObject.GetComponent<Rigidbody2D>();
-        Invoke("randomMove", 5f);
+        
+        Invoke("randomMove", 7f);
     }
     public void Update()
     {
         switch (state)
         {
             case Enemystate.idle:
-                
+                attack();
                 move();
                 break;
             case Enemystate.attack:
@@ -294,39 +301,167 @@ public class EnemyMove : MonoBehaviour
     }
     private void move()
     {
-        Vector2 moveVelocity = new Vector2(moveNum,0);
-        if (moveNum == 1)
+        if (!isAttack)
         {
-            enemy.GetComponent<SpriteRenderer>().flipX = false;
-            enemyRigid.AddForce(moveVelocity * Speed);
+            Vector2 moveVelocity = new Vector2(moveNum, 0);
+            if (moveNum == 1)
+            {
+                enemyRigid.AddForce(moveVelocity * Speed);
+                isTurn = false;
+                enemy.GetComponent<SpriteRenderer>().flipX = false;
+
+            }
+            else if (moveNum == -1)
+            {
+                enemyRigid.AddForce(-moveVelocity * Speed);
+                isTurn = true;
+                enemy.GetComponent<SpriteRenderer>().flipX = true;
+
+            }
+            //attackTarget();
+            enterground();
+            walltuch();
+
+
+            if (enemyRigid.velocity.x < 50)
+            {
+                enemyRigid.velocity = new Vector2(moveNum, 0);
+            }
         }
-        else if (moveNum == -1)
-        {
-            enemy.GetComponent<SpriteRenderer>().flipX = true;
-            enemyRigid.AddForce(-moveVelocity * Speed);
-        }
-        attackTarget();
-        enterground();
-        
-        
-        if (enemyRigid.velocity.x < 50)
-        {
-            enemyRigid.velocity = new Vector2(moveNum, 0);
-        }
-        
+        else { return; }
     }
     public void attack()
     {
-
+        if (isTurn == true)
+        {
+            Ray2D ray = new Ray2D(this.transform.position, Vector2.left);
+            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, 1.9f, player);
+            Debug.DrawRay(this.transform.position, Vector2.left, Color.red);
+            if (hit.collider != null)
+            {
+                Debug.Log("플레이어에 닷았다.");
+                //this.GetComponentInParent<PlayerMove>().enemyCount++;
+                target = hit.collider.gameObject;
+                state = Enemystate.attack;
+                enemyAnime.SetBool("move", false);
+                moveNum = 0;
+                isAttack = true;
+                //isEnemyAttack = true;
+                //enemy.GetComponent<SpriteRenderer>().flipX = false;
+                //isTurn = false;
+            }
+            else
+            {
+                if (target == null) { return; }
+                else
+                {
+                    Debug.Log("플레이어가 벗어났다.");
+                    state = Enemystate.idle;
+                    //if (this.GetComponentInParent<PlayerMove>().enemyCount <= 0) { return; }
+                    //else { this.GetComponentInParent<PlayerMove>().enemyCount--; }
+                    target = null;
+                    isAttack = false;
+                    randomMove();
+                    //isEnemyAttack = false;
+                }
+            }
+        }
+        else if (isTurn == false)
+        {
+            Ray2D ray = new Ray2D(this.transform.position, Vector2.right);
+            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, 1.9f, player);
+            Debug.DrawRay(this.transform.position, Vector2.right, Color.red);
+            if (hit.collider != null)
+            {
+                Debug.Log("플레이어에 닷았다.");
+                //this.GetComponentInParent<PlayerMove>().enemyCount++;
+                target = hit.collider.gameObject;
+                state = Enemystate.attack;
+                enemyAnime.SetBool("move", false);
+                moveNum = 0;
+                isAttack = true;
+                //isEnemyAttack = true;
+                //enemy.GetComponent<SpriteRenderer>().flipX = false;
+                //isTurn = false;
+            }
+            else
+            {
+                if (target == null) { return; }
+                else
+                {
+                    Debug.Log("플레이어가 벗어났다.");
+                    //if (this.GetComponentInParent<PlayerMove>().enemyCount <= 0) { return; }
+                    //else { this.GetComponentInParent<PlayerMove>().enemyCount--; }
+                    state = Enemystate.idle;
+                    
+                    target = null;
+                    moveNum = 1;
+                    isAttack = false;
+                    randomMove();
+                    //isEnemyAttack = false;
+                }
+            }
+        }
     }
     public void Damage()
     {
         target.GetComponent<PlayerDB>().DB.hp -= this.GetComponent<EnemyManager>().AttackPoint;
     }
+    
+    public void randomMove()
+    {
+        Debug.Log("무브 랜덤");
+        moveNum = Random.Range(-1, 2);
+        if (moveNum == 0)
+        {
+            enemyAnime.SetBool("move", false);
+        }
+        if (moveNum == 1 || moveNum == -1)
+        {
+            enemyAnime.SetBool("move", true);
+        }
+        if (isAttack == false)
+        {
+            Invoke("randomMove", 7f);
+        }
+        else
+        {
+            return;
+        }
+    }
+    #region 레이케스트
+    void walltuch()
+    {
+        if (isTurn)
+        {
+            Ray2D ray2d = new Ray2D(this.transform.position, Vector2.left);
+            RaycastHit2D hit = Physics2D.Raycast(ray2d.origin, ray2d.direction, 0.9f, wallmask);
+            Debug.DrawRay(this.transform.position, Vector2.left);
+            if (hit.collider != null)
+            {
+                Debug.Log("몬스터가 벽에 닷았다.");
+                enemy.GetComponent<SpriteRenderer>().flipX = false;
+                isTurn = false;
+            }
+        }
+        if (!isTurn)
+        {
+            Ray2D ray2d = new Ray2D(this.transform.position, Vector2.right);
+            RaycastHit2D hit = Physics2D.Raycast(ray2d.origin, ray2d.direction, 0.9f, wallmask);
+            Debug.DrawRay(this.transform.position, Vector2.right);
+            if (hit.collider != null)
+            {
+                Debug.Log("몬스터가 벽에 닷았다.");
+                enemy.GetComponent<SpriteRenderer>().flipX = true;
+                isTurn = true;
+            }
+        }
+
+    }
     void enterground()
     {
         Ray2D ray2 = new Ray2D(this.transform.position, -Vector2.up);
-        RaycastHit2D hit = Physics2D.Raycast(ray2.origin, ray2.direction,1.4f,mask);
+        RaycastHit2D hit = Physics2D.Raycast(ray2.origin, ray2.direction,0.9f,mask);
         Debug.DrawRay(this.transform.position, -Vector2.up);
         if (hit.collider == null)
         {
@@ -342,54 +477,49 @@ public class EnemyMove : MonoBehaviour
             enemy.GetComponent<Collider2D>().isTrigger = true;
         }
     }
-    void attackTarget()
-    {
-        //Vector2 ab = this.transform.forward;
-        //Vector2 ac = target.transform.position - this.transform.position;
-        //ac.Normalize();
+    //void attackTarget()
+    //{
+    //    //Vector2 ab = this.transform.forward;
+    //    //Vector2 ac = target.transform.position - this.transform.position;
+    //    //ac.Normalize();
 
-        //float dist = target.transform.position.x - this.transform.position.x;
+    //    //float dist = target.transform.position.x - this.transform.position.x;
 
-        //float cos = Vector3.Dot(ab, ac);
-        //float cos_to_anlge = Mathf.Acos(cos);
+    //    //float cos = Vector3.Dot(ab, ac);
+    //    //float cos_to_anlge = Mathf.Acos(cos);
 
-        //float y = 180 * (cos_to_anlge / Mathf.PI);
-        //Ray2D ray2 = new Ray2D(this.transform.forward, -Vector2.up);
-        //RaycastHit2D hit = Physics2D.Raycast(ray2.origin, ray2.direction);
-        //Debug.DrawRay(ab, ac);
-        LayerMask Layer = 1 << 7;
-        coll = Physics2D.OverlapCircle(transform.position, 30.0f, Layer);
-        if (coll != null)
-        {
-            Debug.Log("닷았다");
-        }
-    }
-    public void randomMove()
-    {
-        Debug.Log("무브 랜덤");
-        moveNum = Random.Range(-1, 2);
-        Invoke("randomMove", 5f);
-    }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            target = collision.gameObject;
-            state = Enemystate.attack;
-        }
-    }
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            state = Enemystate.attack;
-        }
-    }
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
+    //    //float y = 180 * (cos_to_anlge / Mathf.PI);
+    //    //Ray2D ray2 = new Ray2D(this.transform.forward, -Vector2.up);
+    //    //RaycastHit2D hit = Physics2D.Raycast(ray2.origin, ray2.direction);
+    //    //Debug.DrawRay(ab, ac);
+    //    LayerMask Layer = 1 << 7;
+    //    coll = Physics2D.OverlapCircle(transform.position, 30.0f, Layer);
+    //    if (coll != null)
+    //    {
+    //        Debug.Log("닷았다");
+    //    }
+    //}
+    #endregion
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Player"))
+    //    {
+    //        target = collision.gameObject;
+    //        state = Enemystate.attack;
+    //    }
+    //}
+    //private void OnTriggerStay2D(Collider2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Player"))
+    //    {
+    //        state = Enemystate.attack;
+    //    }
+    //}
+    //private void OnTriggerExit2D(Collider2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Player"))
+    //    {
 
-        }
-    }
+    //    }
+    //}
 }

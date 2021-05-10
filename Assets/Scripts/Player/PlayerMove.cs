@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+    public SpwonEnemy Spwonenemy;
+    public MapDatabass mapdb;
     public Transform PlayerPOS;
     public Rigidbody2D playerRigd;
     public SpriteRenderer player;
+    public SystemManager systemManager;
     public float PlayerSpeed = 10.0f;
     public float JumpFowar = 5.0f;
     public bool isjumping = false;
     public int JumpCount = 0;
-    public bool isEnemyAttack = false;
-    public GameObject target;
+    public string eventKinds;
     public enum PlayerKinds
     {
         a, b, c, d, e, f, g
@@ -20,6 +22,8 @@ public class PlayerMove : MonoBehaviour
     public PlayerKinds playerKinds;
 
     public int enemyCount;
+    public Animator myAnime;
+    public bool isTurn = false;
     #region 싱글톤
     private static PlayerMove instance = null;
     void Awake()
@@ -27,8 +31,6 @@ public class PlayerMove : MonoBehaviour
         if (null == instance)
         {
             instance = this;
-
-            //DontDestroyOnLoad(this.gameObject);
         }
         else
         {
@@ -50,83 +52,71 @@ public class PlayerMove : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        mapdb = GameObject.FindGameObjectWithTag("MapDB").GetComponent<MapDatabass>();
+        Spwonenemy = GameObject.FindGameObjectWithTag("MapDB").GetComponent<SpwonEnemy>();
+        systemManager = GameObject.FindGameObjectWithTag("SystemManager").GetComponent<SystemManager>();
+        if (systemManager.DB.isGames == true)
+        {
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else { return; }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (systemManager.DB.isnarration) { return; }
+        else
         {
-            float delta = PlayerSpeed * Time.deltaTime;
-
-            player.flipX = false;
-
-            PlayerPOS.Translate(PlayerPOS.right * delta);
-
-        }
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-
-            float delta = PlayerSpeed * Time.deltaTime;
-
-            player.flipX = true;
-
-            PlayerPOS.Translate(-PlayerPOS.right * delta);
-
-
-        }
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            if (JumpCount >= 2)
+            if (Input.GetKey(KeyCode.RightArrow))
             {
-                isjumping = false;
-                return;
+                float delta = PlayerSpeed * Time.deltaTime;
+
+                player.flipX = false;
+                isTurn = false;
+                PlayerPOS.Translate(PlayerPOS.right * delta);
+                myAnime.SetBool("move", true);
+            }
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+
+                float delta = PlayerSpeed * Time.deltaTime;
+                PlayerPOS.Translate(-PlayerPOS.right * delta);
+
+                player.flipX = true;
+                isTurn = true;
+
+
+                myAnime.SetBool("move", true);
+
 
             }
-            else
+            if (Input.GetKeyUp(KeyCode.RightArrow))
             {
-                this.gameObject.GetComponent<Rigidbody2D>().mass = 1;
-                playerRigd.AddForce(Vector2.up * JumpFowar, ForceMode2D.Impulse);
-                isjumping = true;
-                JumpCount++;
+                myAnime.SetBool("move", false);
             }
+            if (Input.GetKeyUp(KeyCode.LeftArrow))
+            {
+                myAnime.SetBool("move", false);
+            }
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                if (JumpCount >= 2)
+                {
+                    isjumping = false;
+                    return;
 
-        }
-        if (Input.GetKeyDown(KeyCode.Z))//기본공격
-        {
-            Debug.Log("공격");
-            switch (playerKinds)
-            {
-                case PlayerKinds.a:
-                    Debug.Log("거지기본공격");
-                    Attack();
-                    break;
-                case PlayerKinds.b:
-                    Debug.Log("평민기본공격");
-                    Attack();
-                    break;
-                case PlayerKinds.c:
-                    Debug.Log("남궁세가기본공격");
-                    Attack();
-                    break;
-                case PlayerKinds.d:
-                    Debug.Log("북해빙공기본공격");
-                    Attack();
-                    break;
-                case PlayerKinds.e:
-                    Debug.Log("마교기본공격");
-                    Attack();
-                    break;
-                case PlayerKinds.f:
-                    Debug.Log("혈교기본공격");
-                    Attack();
-                    break;
-                case PlayerKinds.g:
-                    Debug.Log("기본공격");
-                    Attack();
-                    break;
+                }
+                else
+                {
+                    this.gameObject.GetComponent<Rigidbody2D>().mass = 1;
+                    playerRigd.AddForce(Vector2.up * JumpFowar, ForceMode2D.Impulse);
+                    isjumping = true;
+                    JumpCount++;
+                }
+
             }
+            
         }
         kinds();
     }
@@ -157,18 +147,7 @@ public class PlayerMove : MonoBehaviour
                 break;
         }
     }
-    public void Attack()
-    {
-        if (isEnemyAttack)
-        {
-            if (target != null)
-            {
-                Debug.Log("적이 맞았다");
-                target.gameObject.GetComponent<EnemyManager>().hp -= PlayerDB.Instance.DB.AttackPint;
-            }
-        }
 
-    }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
@@ -177,94 +156,95 @@ public class PlayerMove : MonoBehaviour
             isjumping = false;
             JumpCount = 0;
         }
-        //if (collision.gameObject.CompareTag("Enemy"))
-        //{
-        //    if (!target.gameObject.GetComponent<EnemyMove>().isplayer)
-        //    {
-        //        enemyCount++;
-        //        isEnemyAttack = true;
-        //        target = collision.gameObject;
-        //        target.gameObject.GetComponent<EnemyMove>().isplayer = true;
-        //        target.gameObject.GetComponent<EnemyMove>().Playertarget = this.gameObject.transform;
-        //    }
-        //}
+    }
 
-    }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Enemy"))
-        {
-            isEnemyAttack = false;
-        }
-    }
     public int mapLevel;
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (SpwonEnemy.Instance.DB.mapEnemy.Count == 0)
+        if (systemManager.DB.isFirst_story)
         {
             if (collision.gameObject.CompareTag("warf"))
             {
-                Debug.Log("이동");
-                mapLevel++;
-                if (mapLevel == 0)
-                {
-                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
-                    Debug.Log("랜덤" + MapDatabass.Instance.DB.SpwanNum);
-                    MapDatabass.Instance.SpwanPlayer();
-                    SpwonEnemy.Instance.spwonEnemys();
-                }
-                if (mapLevel == 1)
-                {
-
-                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
-                    MapDatabass.Instance.SpwanPlayer();
-                    SpwonEnemy.Instance.spwonEnemys();
-
-                }
-                if (mapLevel == 2)
-                {
-
-                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
-                    MapDatabass.Instance.SpwanPlayer();
-                    SpwonEnemy.Instance.spwonEnemys();
-
-                }
-                if (mapLevel == 3)
-                {
-                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
-                    MapDatabass.Instance.SpwanPlayer();
-                    SpwonEnemy.Instance.spwonEnemys();
-
-                }
-                if (mapLevel == 4)
-                {
-                    MapDatabass.Instance.DB.SpwanNum = Random.Range(0, 5);
-                    MapDatabass.Instance.SpwanPlayer();
-                    SpwonEnemy.Instance.spwonEnemys();
-
-                }
-                if (mapLevel == 5)
-                {
-                    //if (SpwonEnemy.Instance.DB.mapEnemy == null)
-                    //{
-                    MapDatabass.Instance.homePlayer();
-
-                    MapDatabass.Instance.DB.mapLevel = 0;
-                    //}
-                }
-                if (mapLevel > 5) { mapLevel = 0; }
+                //mapdb.SpwanPlayer();
+                mapdb.DB.Player.position = mapdb.DB.falststoypos[0].transform.position;
+                mapdb.DB.mapNum = 6;
+                Camera.main.GetComponent<Camera>().transform.position = new Vector3(Camera.main.transform.position.x, mapdb.DB.falststoypos[0].transform.position.y + 3f, Camera.main.transform.position.z);
+                mapdb.minmap.transform.position = new Vector3(mapdb.minmapPos[6].transform.position.x, mapdb.minmapPos[6].transform.position.y, -25.0f);
+                mapdb.fadeMap();
+                Spwonenemy.fadeEnemyIn();
             }
         }
-        if (collision.gameObject.CompareTag("Enemy"))
+        else
         {
-            enemyCount++;
-            isEnemyAttack = true;
-            target = collision.gameObject;
-            //target.gameObject.GetComponent<EnemyMove>().isplayer = true;
-            //target.gameObject.GetComponent<EnemyMove>().Playertarget = this.gameObject.transform;
-        }
+            if (Spwonenemy.DB.mapEnemy.Count == 0)
+            {
+                if (collision.gameObject.CompareTag("warf"))
+                {
+                    Debug.Log("이동");
+                    mapLevel++;
+                    if (mapLevel == 0)
+                    {
+                        mapdb.DB.SpwanNum = Random.Range(0, 5);
+                        Debug.Log("랜덤" + mapdb.DB.SpwanNum);
+                        mapdb.SpwanPlayer();
+                        Spwonenemy.spwonEnemys();
+                    }
+                    if (mapLevel == 1)
+                    {
 
+                        mapdb.DB.SpwanNum = Random.Range(0, 5);
+                        mapdb.SpwanPlayer();
+                        Spwonenemy.spwonEnemys();
+
+                    }
+                    if (mapLevel == 2)
+                    {
+
+                        mapdb.DB.SpwanNum = Random.Range(0, 5);
+                        mapdb.SpwanPlayer();
+                        Spwonenemy.spwonEnemys();
+
+                    }
+                    if (mapLevel == 3)
+                    {
+                        mapdb.DB.SpwanNum = Random.Range(0, 5);
+                        mapdb.SpwanPlayer();
+                        Spwonenemy.spwonEnemys();
+
+                    }
+                    if (mapLevel == 4)
+                    {
+                        mapdb.DB.SpwanNum = Random.Range(0, 5);
+                        mapdb.SpwanPlayer();
+                        Spwonenemy.spwonEnemys();
+
+                    }
+                    if (mapLevel == 5)
+                    {
+                        //if (SpwonEnemy.Instance.DB.mapEnemy == null)
+                        //{
+                        mapdb.homePlayer();
+
+                        mapdb.DB.mapLevel = 0;
+                        //}
+                    }
+                    if (mapLevel > 5) { mapLevel = 0; }
+                }
+            }
+
+        }
+        #region 주석
+        //if (collision.gameObject.CompareTag("Enemy"))
+        //{
+        //    enemyCount++;
+        //    isEnemyAttack = true;
+        //    target = collision.gameObject;
+        //    //target.gameObject.GetComponent<EnemyMove>().isplayer = true;
+        //    //target.gameObject.GetComponent<EnemyMove>().Playertarget = this.gameObject.transform;
+        //}
+        #endregion
     }
+    #region 주석
     //private void OnTriggerExit2D(Collider2D collision)
     //{
     //    if (collision.gameObject.CompareTag("Enemy"))
@@ -274,6 +254,7 @@ public class PlayerMove : MonoBehaviour
     //        collision.gameObject.GetComponent<Rigidbody2D>().gravityScale = 1;
     //    }
     //}
+    #endregion
 
 }
 

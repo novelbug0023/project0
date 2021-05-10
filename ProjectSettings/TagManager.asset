@@ -11,6 +11,15 @@ TagManager:
   - wall
   - Enemy
   - warf
+  - event
+  - MapDB
+  - Spwonenemy
+  - DialogueManager
+  - creatChocesbt
+  - ShowDialogue
+  - SystemManager
+  - SystemM
+  - PlayerAttackPos
   layers:
   - Default
   - TransparentFX
@@ -20,9 +29,9 @@ TagManager:
   - UI
   - Ground
   - Player
-  - 
-  - 
-  - 
+  - minmap
+  - wall
+  - Enemy
   - 
   - 
   - 
@@ -56,6 +65,9 @@ TagManager:
     locked: 0
   - name: Item
     uniqueID: 1974310937
+    locked: 0
+  - name: NPC
+    uniqueID: 600021809
     locked: 0
   - name: Enemy
     uniqueID: 3708021461
