@@ -23,6 +23,7 @@ public class Attack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        kinds();
         attack();
         if (this.GetComponent<PlayerMove>().systemManager.DB.isEvent == false)
         {
@@ -61,6 +62,33 @@ public class Attack : MonoBehaviour
                         break;
                 }
             }
+        }
+    }
+    public void kinds()
+    {
+        switch (PlayerDB.Instance.DB.KINDS)
+        {
+            case "°ÅÁö":
+                playerKinds = PlayerKinds.a;
+                break;
+            case "Æò¹Î":
+                playerKinds = PlayerKinds.b;
+                break;
+            case "³²±Ã":
+                playerKinds = PlayerKinds.c;
+                break;
+            case "ºù±Ã":
+                playerKinds = PlayerKinds.d;
+                break;
+            case "¸¶±³":
+                playerKinds = PlayerKinds.e;
+                break;
+            case "Ç÷±³":
+                playerKinds = PlayerKinds.f;
+                break;
+            case "":
+
+                break;
         }
     }
     void attack()

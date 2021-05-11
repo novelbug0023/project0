@@ -11,6 +11,39 @@ public class PlayerDataBass
     public int AttackPint = 5;
     public int hp = 100;
     public int maxhp = 100;
+    #region X스킬
+    public enum XSKILL_ATTACK
+    {
+        X_2001/*마공*/
+      , X_2002/*혈마공*/
+      , X_2003/*빙공*/
+      , X_2004/*정공*/
+      , X_2005/*기본토납공*/
+    }
+    public XSKILL_ATTACK Xskill_Attack;
+    #endregion
+    #region C스킬
+    public enum CSKILL_ATTACK
+    {
+        C_2001/*마공*/
+      , C_2002/*혈마공*/
+      , C_2003/*빙공*/
+      , C_2004/*정공*/
+      , C_2005/*기본토납공*/
+    }
+    public CSKILL_ATTACK Cskill_Attack;
+    #endregion
+    #region V스킬
+    public enum VSKILL_ATTACK
+    {
+        V_2001/*마공*/
+      , V_2002/*혈마공*/
+      , V_2003/*빙공*/
+      , V_2004/*정공*/
+      , V_2005/*기본토납공*/
+    }
+    public VSKILL_ATTACK Vskill_Attack;
+    #endregion
 }
 public class PlayerDB : MonoBehaviour
 {
@@ -52,4 +85,11 @@ public class PlayerDB : MonoBehaviour
     #endregion
 
     public PlayerDataBass DB;
+    public void Update()
+    {
+        if (DB.hp < 0)
+        {
+            DB.hp = 0;
+        }
+    }
 }

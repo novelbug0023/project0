@@ -15,14 +15,9 @@ public class PlayerMove : MonoBehaviour
     public bool isjumping = false;
     public int JumpCount = 0;
     public string eventKinds;
-    public enum PlayerKinds
-    {
-        a, b, c, d, e, f, g
-    }
-    public PlayerKinds playerKinds;
-
     public int enemyCount;
     public Animator myAnime;
+    public int Hp;
     public bool isTurn = false;
     #region ΩÃ±€≈Ê
     private static PlayerMove instance = null;
@@ -55,6 +50,7 @@ public class PlayerMove : MonoBehaviour
         mapdb = GameObject.FindGameObjectWithTag("MapDB").GetComponent<MapDatabass>();
         Spwonenemy = GameObject.FindGameObjectWithTag("MapDB").GetComponent<SpwonEnemy>();
         systemManager = GameObject.FindGameObjectWithTag("SystemManager").GetComponent<SystemManager>();
+        Hp = PlayerDB.Instance.DB.hp;
         if (systemManager.DB.isGames == true)
         {
             DontDestroyOnLoad(this.gameObject);
@@ -65,7 +61,12 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (systemManager.DB.isnarration) { return; }
+        if (Hp < 0)
+        {
+            Hp = 0;
+        }
+        PlayerDB.Instance.DB.hp = Hp; 
+        if (systemManager.DB.isnarration) { myAnime.SetBool("move", false); return; }
         else
         {
             if (Input.GetKey(KeyCode.RightArrow))
@@ -118,35 +119,8 @@ public class PlayerMove : MonoBehaviour
             }
             
         }
-        kinds();
     }
-    public void kinds()
-    {
-        switch (PlayerDB.Instance.DB.KINDS)
-        {
-            case "∞≈¡ˆ":
-                playerKinds = PlayerKinds.a;
-                break;
-            case "∆ÚπŒ":
-                playerKinds = PlayerKinds.b;
-                break;
-            case "≥≤±√":
-                playerKinds = PlayerKinds.c;
-                break;
-            case "∫œ«ÿ":
-                playerKinds = PlayerKinds.d;
-                break;
-            case "∏∂±≥":
-                playerKinds = PlayerKinds.e;
-                break;
-            case "«˜±≥":
-                playerKinds = PlayerKinds.f;
-                break;
-            case "":
-
-                break;
-        }
-    }
+    
 
     private void OnCollisionEnter2D(Collision2D collision)
     {

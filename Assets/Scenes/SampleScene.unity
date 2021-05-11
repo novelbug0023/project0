@@ -6091,6 +6091,9 @@ GameObject:
   - component: {fileID: 896800455}
   - component: {fileID: 896800456}
   - component: {fileID: 896800457}
+  - component: {fileID: 896800460}
+  - component: {fileID: 896800459}
+  - component: {fileID: 896800458}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -6253,9 +6256,10 @@ MonoBehaviour:
   JumpFowar: 7
   isjumping: 0
   JumpCount: 0
-  playerKinds: 0
+  eventKinds: 
   enemyCount: 0
   myAnime: {fileID: 896800455}
+  Hp: 0
   isTurn: 0
   mapLevel: 0
 --- !u!114 &896800457
@@ -6277,6 +6281,45 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   playerKinds: 0
+--- !u!114 &896800458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 896800450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 753339e574006124b8d9e475646d0f7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillDB: {fileID: 0}
+--- !u!114 &896800459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 896800450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fd4ab97c3283914596f6fc705907c3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillDB: {fileID: 0}
+--- !u!114 &896800460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 896800450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab5161d17cd33054bac59d43560ca2b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillDB: {fileID: 0}
 --- !u!1 &902532184
 GameObject:
   m_ObjectHideFlags: 0
@@ -13656,9 +13699,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1987149194}
   - component: {fileID: 1987149193}
+  - component: {fileID: 1987149195}
   m_Layer: 0
   m_Name: playerDB
-  m_TagString: Untagged
+  m_TagString: PlayerDB
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -13680,8 +13724,11 @@ MonoBehaviour:
     Dia: 1
     KINDS: "\uAC70\uC9C0"
     AttackPint: 10
-    hp: 100
-    maxhp: 100
+    hp: 200
+    maxhp: 200
+    Xskill_Attack: 4
+    Cskill_Attack: 4
+    Vskill_Attack: 4
 --- !u!4 &1987149194
 Transform:
   m_ObjectHideFlags: 0
@@ -13696,6 +13743,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1987149195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987149192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2d3dd13a5af87c478b765bf22d0a024, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attack: {fileID: 0}
+  player: {fileID: 0}
+  DB: {fileID: 0}
+  damage: 0
 --- !u!1 &1989037395
 GameObject:
   m_ObjectHideFlags: 0

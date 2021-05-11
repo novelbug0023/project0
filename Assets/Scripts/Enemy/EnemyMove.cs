@@ -286,16 +286,31 @@ public class EnemyMove : MonoBehaviour
         
         Invoke("randomMove", 7f);
     }
+
+    public float deltime = 5f;
+    public float Mexdeltime = 5f;
     public void Update()
     {
         switch (state)
         {
             case Enemystate.idle:
-                attack();
+                deltime -= Time.deltaTime;
+                if (deltime < 0)
+                {
+                    attack();
+                    deltime = Mexdeltime;
+                }
+                
                 move();
                 break;
             case Enemystate.attack:
-                attack();
+                //attack();
+                deltime -= Time.deltaTime;
+                if (deltime < 0)
+                {
+                    attack();
+                    deltime = Mexdeltime;
+                }
                 break;
         }
     }
@@ -346,6 +361,8 @@ public class EnemyMove : MonoBehaviour
                 enemyAnime.SetBool("move", false);
                 moveNum = 0;
                 isAttack = true;
+                StartCoroutine(Damage());
+                Debug.Log("공격한다");
                 //isEnemyAttack = true;
                 //enemy.GetComponent<SpriteRenderer>().flipX = false;
                 //isTurn = false;
@@ -362,6 +379,7 @@ public class EnemyMove : MonoBehaviour
                     target = null;
                     isAttack = false;
                     randomMove();
+                    StopCoroutine(Damage());
                     //isEnemyAttack = false;
                 }
             }
@@ -380,6 +398,8 @@ public class EnemyMove : MonoBehaviour
                 enemyAnime.SetBool("move", false);
                 moveNum = 0;
                 isAttack = true;
+                Debug.Log("공격한다");
+                StartCoroutine(Damage());
                 //isEnemyAttack = true;
                 //enemy.GetComponent<SpriteRenderer>().flipX = false;
                 //isTurn = false;
@@ -398,14 +418,21 @@ public class EnemyMove : MonoBehaviour
                     moveNum = 1;
                     isAttack = false;
                     randomMove();
+                    StopCoroutine(Damage()); 
                     //isEnemyAttack = false;
                 }
             }
         }
     }
-    public void Damage()
+    IEnumerator Damage()
     {
-        target.GetComponent<PlayerDB>().DB.hp -= this.GetComponent<EnemyManager>().AttackPoint;
+        while (true)
+        {
+            yield return new WaitForSeconds(0.5f);
+            Debug.Log("적이 공격했다");
+            target.GetComponent<PlayerMove>().Hp -= this.GetComponent<EnemyManager>().AttackPoint;
+            yield return new WaitForSeconds(0.5f);
+        }
     }
     
     public void randomMove()
